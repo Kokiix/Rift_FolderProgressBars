@@ -2,6 +2,7 @@
 using HarmonyLib;
 using Shared.TrackData;
 using Shared.TrackSelection;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -34,15 +35,28 @@ static class ToggleProgressBar
 
     static void CreateProgressBar(Transform trackOption)
     {
+        // TODO: make color change on select (likely something to do with TrackSelectionOptionColorAnimator)
         ProgressBar = new GameObject("ProgressBar");
-        ProgressBar.transform.localPosition = new Vector3(-250, -30, 0);
+        ProgressBar.transform.localPosition = new Vector3(200, 0, 0);
         ProgressBar.SetActive(false);
 
-        var img = ProgressBar.AddComponent<Image>();
-        img.color = Color.blue;
+        var outerBar = new GameObject("outerBar");
+        outerBar.transform.SetParent(ProgressBar.transform);
+        outerBar.transform.localPosition = new Vector3(0, -40, 0);
+        outerBar.AddComponent<Image>().color = new Color(0.553f, 0.533f, 0.592f);
+        outerBar.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 15);
 
-        var rect = ProgressBar.GetComponent<RectTransform>();
-        rect.sizeDelta = new Vector2(200, 100);
+        var innerBar = Object.Instantiate(outerBar);
+        innerBar.transform.SetParent(outerBar.transform);
+        innerBar.transform.localPosition = new Vector3(-72.5f, 0, 0);
+        innerBar.GetComponent<Image>().color = Color.black;
+        innerBar.GetComponent<RectTransform>().sizeDelta = new Vector2(150, 10);
+
+        var number = Object.Instantiate(trackOption.parent.Find("LetterGradeDashed")).gameObject;
+        number.transform.SetParent(ProgressBar.transform);
+        number.transform.localPosition = new Vector3(-200, -40, 0);
+        number.GetComponent<TextMeshProUGUI>().text = "50%";
+        number.SetActive(true);
     }
 
     static void AttachProgressBar(Transform trackOption)

@@ -29,7 +29,7 @@
 
         <Reference Include="$(DLLs)\RiftOfTheNecroManager.dll" />
 
-        <!-- <Reference Include="$(DLLs)\Unity.TextMeshPro.dll" /> -->
+        <Reference Include="$(DLLs)\Unity.TextMeshPro.dll" />
         <Reference Include="$(DLLs)\UnityEngine.UI.dll" />
     </ItemGroup>
 
