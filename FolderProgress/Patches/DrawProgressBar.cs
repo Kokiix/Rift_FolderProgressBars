@@ -27,13 +27,19 @@ static class ToggleProgressBar
             // else
             // {
             if (!ProgressBar)
-                CreateProgressBar(container);
-            AttachProgressBar(container);
+            {
+                CreateProgressBar(container.parent.Find("LetterGradeDashed"));
+                var bar = Object.Instantiate(ProgressBar);
+                bar.transform.SetParent(container, worldPositionStays: false);
+                bar.SetActive(true);
+            }
             // }
+
+            UpdateBarPercentage();
         }
     }
 
-    static void CreateProgressBar(Transform trackOption)
+    static void CreateProgressBar(Transform textTemplate)
     {
         // TODO: make color change on select (likely something to do with TrackSelectionOptionColorAnimator)
         ProgressBar = new GameObject("ProgressBar");
@@ -52,17 +58,15 @@ static class ToggleProgressBar
         innerBar.GetComponent<Image>().color = Color.black;
         innerBar.GetComponent<RectTransform>().sizeDelta = new Vector2(150, 10);
 
-        var number = Object.Instantiate(trackOption.parent.Find("LetterGradeDashed")).gameObject;
+        var number = Object.Instantiate(textTemplate).gameObject;
         number.transform.SetParent(ProgressBar.transform);
         number.transform.localPosition = new Vector3(-200, -40, 0);
         number.GetComponent<TextMeshProUGUI>().text = "50%";
         number.SetActive(true);
     }
 
-    static void AttachProgressBar(Transform trackOption)
+    static void UpdateBarPercentage()
     {
-        var bar = Object.Instantiate(ProgressBar);
-        bar.transform.SetParent(trackOption, worldPositionStays: false);
-        bar.SetActive(true);
+
     }
 }
