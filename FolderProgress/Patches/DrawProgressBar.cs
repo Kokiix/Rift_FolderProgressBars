@@ -37,20 +37,39 @@ static class ToggleProgressBar
 
             // }
 
+            Debug.LogError("folder " + folderName);
+
             int totalTracksInFolder = 0;
             double FCedTracks = 0;
-            while (
-                ++optionIndex < __instance._options.Count &&
-                __instance._options[optionIndex]._trackFolderTabText.text == folderName)
+            var currFolderIdx = __instance.GetFolderIndexForTrack(++optionIndex);
+            while (currFolderIdx != -1)
             {
-                // TODO: allow criteria other than FC
                 totalTracksInFolder++;
-                if (__instance._options[optionIndex]._fullComboObject.activeSelf)
-                    FCedTracks++;
+                if (__instance._trackMetaData[optionIndex].)
+                    Debug.LogError(.TrackName);
+                currFolderIdx = __instance.GetFolderIndexForTrack(++optionIndex);
             }
+            // var test = __instance._trackMetaData[idx] as FolderTrackMetadata;
+            // Debug.LogError(test.TrackName);
+            // foreach (Transform t in container.parent.parent.parent)
+            // {
+            //     if (t.name == "TrackOption_Normal(Clone)")
+            //     {
+            //         var option = t.gameObject.GetComponent<BaseTrackSelectionOption>();
+            //         Debug.LogError(option._trackFolderTabText.text);
+            //         if (option._trackFolderTabText.text == folderName)
+            //         {
+            //             Debug.LogError("song " + option.LevelId + " found under " + folderName);
+            //         }
+            //         // else
+            //         // {
+            //         //     Debug.LogError("song " + option.LevelId + " not found under folder");
+            //         // }
+            //     }
+            // }
 
-            int wholePercentage = (int)Math.Round(FCedTracks / totalTracksInFolder * 100);
-            UpdateBarPercentage(barInstance, wholePercentage);
+            // int wholePercentage = (int)Math.Round(FCedTracks / totalTracksInFolder * 100);
+            // UpdateBarPercentage(barInstance, wholePercentage);
         }
     }
 
