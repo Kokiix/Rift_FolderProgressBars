@@ -27,10 +27,10 @@
     <ItemGroup>
         <Reference Include="$(DLLs)\Assembly-CSharp.dll" Publicize="true" />
 
-        <!-- <Reference Include="$(DLLs)\RiftOfTheNecroManager.dll" />
+        <Reference Include="$(DLLs)\RiftOfTheNecroManager.dll" />
 
-        <Reference Include="$(DLLs)\Unity.TextMeshPro.dll" />
-        <Reference Include="$(DLLs)\UnityEngine.UI.dll" /> -->
+        <!-- <Reference Include="$(DLLs)\Unity.TextMeshPro.dll" /> -->
+        <Reference Include="$(DLLs)\UnityEngine.UI.dll" />
     </ItemGroup>
 
     <ItemGroup>

@@ -3,6 +3,7 @@ using HarmonyLib;
 using Shared.TrackData;
 using Shared.TrackSelection;
 using UnityEngine;
+using UnityEngine.UI;
 
 [HarmonyPatch(typeof(BaseTrackSelectionOptionGroup), "InitializeTrackOption")]
 static class ToggleProgressBar
@@ -13,8 +14,7 @@ static class ToggleProgressBar
     {
         if (newTrackMetadata is FolderTrackMetadata)
         {
-            // Folder obj path is Canvas/ScreenContainer/BounceContainer/Content/InfiniteTrackList/ScrollMask/InfiniteScrollTrackArea/TrackOption_Folder(Clone)/
-            var container = __instance._options[optionIndex].transform.Find("BounceContainer");
+            var container = __instance._options[optionIndex].transform.Find("BounceContainer/Background");
             var existingBar = container.Find("ProgressBar(Clone)");
             if (existingBar)
             {
@@ -34,9 +34,15 @@ static class ToggleProgressBar
 
     static void CreateProgressBar(Transform trackOption)
     {
-        ProgressBar = Object.Instantiate(trackOption.Find("LetterGradeDashed").gameObject);
-        ProgressBar.name = "ProgressBar";
-        ProgressBar.transform.localPosition = new Vector3(-500, -30, 0);
+        ProgressBar = new GameObject("ProgressBar");
+        ProgressBar.transform.localPosition = new Vector3(-250, -30, 0);
+        ProgressBar.SetActive(false);
+
+        var img = ProgressBar.AddComponent<Image>();
+        img.color = Color.blue;
+
+        var rect = ProgressBar.GetComponent<RectTransform>();
+        rect.sizeDelta = new Vector2(200, 100);
     }
 
     static void AttachProgressBar(Transform trackOption)
