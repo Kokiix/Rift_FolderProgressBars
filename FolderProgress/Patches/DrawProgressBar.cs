@@ -1,6 +1,9 @@
 
 using System;
 using HarmonyLib;
+using Shared.Pins;
+using Shared.PlayerData;
+using Shared.StorageData;
 using Shared.TrackData;
 using Shared.TrackSelection;
 using TMPro;
@@ -41,14 +44,29 @@ static class ToggleProgressBar
 
             int totalTracksInFolder = 0;
             double FCedTracks = 0;
-            var currFolderIdx = __instance.GetFolderIndexForTrack(++optionIndex);
-            while (currFolderIdx != -1)
+
+            // Start at selected track and go down until we hit newly added folder (workaround for not knowing how to get more accurate position...)
+            var trackIndex = __instance._selectedTrackIndex;
+            var currFolderIdx = __instance.GetFolderIndexForTrack(++trackIndex);
+            while (currFolderIdx != -1 && __instance._trackMetaData[currFolderIdx].TrackName != folderName)
             {
-                totalTracksInFolder++;
-                if (__instance._trackMetaData[optionIndex].)
-                    Debug.LogError(.TrackName);
-                currFolderIdx = __instance.GetFolderIndexForTrack(++optionIndex);
+                currFolderIdx = __instance.GetFolderIndexForTrack(++trackIndex);
             }
+
+            // Go through tracks under folder and count FCs
+            while (currFolderIdx != -1 && __instance._trackMetaData[currFolderIdx].TrackName == folderName)
+            {
+                var track = __instance._trackMetaData[trackIndex];
+                Debug.LogError(__instance._trackMetaData[trackIndex].TrackName);
+
+                totalTracksInFolder++;
+                if (PlayerDataUtil.GetIsFullComboForDifficulty(track.LevelId, __instance._selectedDifficulty, __instance._options[0].GetStatMode()))
+                    FCedTracks++;
+                currFolderIdx = __instance.GetFolderIndexForTrack(++trackIndex);
+            }
+
+            Debug.LogError(FCedTracks);
+            Debug.LogError(totalTracksInFolder);
             // var test = __instance._trackMetaData[idx] as FolderTrackMetadata;
             // Debug.LogError(test.TrackName);
             // foreach (Transform t in container.parent.parent.parent)
