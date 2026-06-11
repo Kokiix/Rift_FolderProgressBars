@@ -1,4 +1,5 @@
 
+using System;
 using HarmonyLib;
 using Shared.TrackData;
 using Shared.TrackSelection;
@@ -11,33 +12,53 @@ static class ToggleProgressBar
 {
     static GameObject ProgressBar;
 
-    static void Postfix(BaseTrackSelectionOptionGroup __instance, int optionIndex, ITrackMetadata newTrackMetadata)
+    static void Postfix(BaseTrackSelectionOptionGroup __instance, int optionIndex, ITrackMetadata newTrackMetadata, string folderName)
     {
         if (newTrackMetadata is FolderTrackMetadata)
         {
             var container = __instance._options[optionIndex].transform.Find("BounceContainer/Background");
             var existingBar = container.Find("ProgressBar(Clone)");
+
+            GameObject barInstance = null;
             if (existingBar)
             {
                 // Debug
-                Object.Destroy(existingBar.gameObject);
+                UnityEngine.Object.Destroy(existingBar.gameObject);
 
                 // existingBar.gameObject.SetActive(true);
             }
             // else
             // {
             if (!ProgressBar)
-            {
                 CreateProgressBar(container.parent.Find("LetterGradeDashed"));
-                var bar = Object.Instantiate(ProgressBar);
-                bar.transform.SetParent(container, worldPositionStays: false);
-                bar.SetActive(true);
-            }
+            barInstance = UnityEngine.Object.Instantiate(ProgressBar);
+            barInstance.transform.SetParent(container, worldPositionStays: false);
+            barInstance.SetActive(true);
+
             // }
 
-            UpdateBarPercentage();
+            int totalTracksInFolder = 0;
+            double FCedTracks = 0;
+            while (
+                ++optionIndex < __instance._options.Count &&
+                __instance._options[optionIndex]._trackFolderTabText.text == folderName)
+            {
+                // TODO: allow criteria other than FC
+                totalTracksInFolder++;
+                if (__instance._options[optionIndex]._fullComboObject.activeSelf)
+                    FCedTracks++;
+            }
+
+            int wholePercentage = (int)Math.Round(FCedTracks / totalTracksInFolder * 100);
+            UpdateBarPercentage(barInstance, wholePercentage);
         }
     }
+
+    const int MaxBarWidth = 300;
+    const int MaxBarHeight = 15;
+    static readonly Color OuterBarColor = new Color(0.553f, 0.533f, 0.592f);
+    static readonly Color InnerBarColor = Color.black;
+    static readonly Vector3 NumberPosition = new Vector3(-200, -40, 0);
 
     static void CreateProgressBar(Transform textTemplate)
     {
@@ -49,24 +70,25 @@ static class ToggleProgressBar
         var outerBar = new GameObject("outerBar");
         outerBar.transform.SetParent(ProgressBar.transform);
         outerBar.transform.localPosition = new Vector3(0, -40, 0);
-        outerBar.AddComponent<Image>().color = new Color(0.553f, 0.533f, 0.592f);
-        outerBar.GetComponent<RectTransform>().sizeDelta = new Vector2(300, 15);
+        outerBar.AddComponent<Image>().color = OuterBarColor;
+        outerBar.GetComponent<RectTransform>().sizeDelta = new Vector2(MaxBarWidth, MaxBarHeight);
 
-        var innerBar = Object.Instantiate(outerBar);
+        var innerBar = UnityEngine.Object.Instantiate(outerBar);
+        innerBar.name = "innerbar";
+        outerBar.GetComponent<Image>().color = InnerBarColor;
         innerBar.transform.SetParent(outerBar.transform);
-        innerBar.transform.localPosition = new Vector3(-72.5f, 0, 0);
-        innerBar.GetComponent<Image>().color = Color.black;
-        innerBar.GetComponent<RectTransform>().sizeDelta = new Vector2(150, 10);
 
-        var number = Object.Instantiate(textTemplate).gameObject;
+        var number = UnityEngine.Object.Instantiate(textTemplate).gameObject;
+        number.name = "number";
         number.transform.SetParent(ProgressBar.transform);
-        number.transform.localPosition = new Vector3(-200, -40, 0);
-        number.GetComponent<TextMeshProUGUI>().text = "50%";
+        number.transform.localPosition = NumberPosition;
         number.SetActive(true);
     }
 
-    static void UpdateBarPercentage()
+    static void UpdateBarPercentage(GameObject bar, int percent)
     {
-
+        // var innerBar = bar.transform.Find("outerBar/innerBar");
+        // innerBar.GetComponent<RectTransform>().sizeDelta
+        // var number = bar.transform.Find("number");
     }
 }
