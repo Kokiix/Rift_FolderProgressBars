@@ -17,6 +17,7 @@ class FolderPPlugin : BaseUnityPlugin
 
     void Awake()
     {
+        gameObject.hideFlags = HideFlags.HideAndDontSave;
         harmony = new Harmony(MyPluginInfo.PLUGIN_GUID);
         harmony.PatchAll();
     }

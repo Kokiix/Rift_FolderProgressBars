@@ -6,7 +6,7 @@
 
         <BepInExPluginGuid>com.koki.folderprogress</BepInExPluginGuid>
         <BepInExPluginName>Folder Progress Bars</BepInExPluginName>
-        <BepInExPluginVersion>1.0.0</BepInExPluginVersion>
+        <BepInExPluginVersion>1.0.1</BepInExPluginVersion>
 
         <BepInExPluginDir>D:\SteamLibrary\steamapps\common\RiftOfTheNecroDancerOSTVolume1\BepInEx\plugins</BepInExPluginDir>
         <Thunderstore>.\.thunderstore</Thunderstore>
