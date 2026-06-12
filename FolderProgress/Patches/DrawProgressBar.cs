@@ -70,18 +70,18 @@ static class ToggleProgressBar
     const int InnerBarMargin = 5;
     static readonly Color OuterBarColor = new Color(0.553f, 0.533f, 0.592f);
     static readonly Color InnerBarColor = Color.black;
-    static readonly Vector3 NumberPosition = new Vector3(-200, -40, 0);
+    static readonly Vector3 BarPosition = new Vector3(200, -40, 0);
+    static readonly Vector3 NumberPosition = new Vector3(0, -40, 0);
 
     static void CreateProgressBar(Transform textTemplate)
     {
         // TODO: make color change on select (likely something to do with TrackSelectionOptionColorAnimator)
-        ProgressBar = new GameObject("ProgressBar");
-        ProgressBar.transform.localPosition = new Vector3(200, 0, 0);
+        ProgressBar = new GameObject("ProgressBar", typeof(RectTransform));
         ProgressBar.SetActive(false);
 
         var outerBar = new GameObject("outerBar");
         outerBar.transform.SetParent(ProgressBar.transform);
-        outerBar.transform.localPosition = new Vector3(0, -40, 0);
+        outerBar.transform.localPosition = BarPosition;
         outerBar.AddComponent<Image>().color = OuterBarColor;
         outerBar.GetComponent<RectTransform>().sizeDelta = new Vector2(MaxBarWidth, MaxBarHeight);
 
@@ -103,6 +103,7 @@ static class ToggleProgressBar
         var innerBarWidth = MaxBarWidth * (float)percent;
         innerBar.GetComponent<RectTransform>().sizeDelta = new Vector2(innerBarWidth, MaxBarHeight - InnerBarMargin);
         innerBar.transform.localPosition = new Vector3(-MaxBarWidth / 2 + innerBarWidth / 2 + InnerBarMargin / 2, 0, 0);
+
         var number = bar.transform.Find("number");
         number.GetComponent<TextMeshProUGUI>().text = ((int)(percent * 100)).ToString() + "%";
     }
