@@ -41,12 +41,10 @@ static class ToggleProgressBar
 
             // }
 
-            Debug.LogError("folder " + folderName);
-
             int totalTracksInFolder = 0;
             double FCedTracks = 0;
 
-            // workaround for not knowing how to get more accurate position...
+            // Loop through all tracks bc idk how to get idx of newly created folder..
             var trackIndex =
             Enumerable.Range(0, __instance._trackMetaData.Count)
             .First(i => __instance._trackMetaData[i].TrackName == folderName);
@@ -57,41 +55,19 @@ static class ToggleProgressBar
             __instance._trackMetaData[__instance.GetFolderIndexForTrack(trackIndex)].TrackName == folderName)
             {
                 var track = __instance._trackMetaData[trackIndex];
-                Debug.LogError(__instance._trackMetaData[trackIndex].TrackName);
 
                 totalTracksInFolder++;
                 if (PlayerDataUtil.GetIsFullComboForDifficulty(track.LevelId, __instance._selectedDifficulty, __instance._options[0].GetStatMode()))
                     FCedTracks++;
             }
 
-            Debug.LogError(FCedTracks);
-            Debug.LogError(totalTracksInFolder);
-            // var test = __instance._trackMetaData[idx] as FolderTrackMetadata;
-            // Debug.LogError(test.TrackName);
-            // foreach (Transform t in container.parent.parent.parent)
-            // {
-            //     if (t.name == "TrackOption_Normal(Clone)")
-            //     {
-            //         var option = t.gameObject.GetComponent<BaseTrackSelectionOption>();
-            //         Debug.LogError(option._trackFolderTabText.text);
-            //         if (option._trackFolderTabText.text == folderName)
-            //         {
-            //             Debug.LogError("song " + option.LevelId + " found under " + folderName);
-            //         }
-            //         // else
-            //         // {
-            //         //     Debug.LogError("song " + option.LevelId + " not found under folder");
-            //         // }
-            //     }
-            // }
-
-            // int wholePercentage = (int)Math.Round(FCedTracks / totalTracksInFolder * 100);
-            // UpdateBarPercentage(barInstance, wholePercentage);
+            UpdateBarPercentage(barInstance, Math.Round(FCedTracks / totalTracksInFolder, 2));
         }
     }
 
     const int MaxBarWidth = 300;
     const int MaxBarHeight = 15;
+    const int InnerBarMargin = 5;
     static readonly Color OuterBarColor = new Color(0.553f, 0.533f, 0.592f);
     static readonly Color InnerBarColor = Color.black;
     static readonly Vector3 NumberPosition = new Vector3(-200, -40, 0);
@@ -110,7 +86,7 @@ static class ToggleProgressBar
         outerBar.GetComponent<RectTransform>().sizeDelta = new Vector2(MaxBarWidth, MaxBarHeight);
 
         var innerBar = UnityEngine.Object.Instantiate(outerBar);
-        innerBar.name = "innerbar";
+        innerBar.name = "innerBar";
         outerBar.GetComponent<Image>().color = InnerBarColor;
         innerBar.transform.SetParent(outerBar.transform);
 
@@ -121,10 +97,11 @@ static class ToggleProgressBar
         number.SetActive(true);
     }
 
-    static void UpdateBarPercentage(GameObject bar, int percent)
+    static void UpdateBarPercentage(GameObject bar, double percent)
     {
-        // var innerBar = bar.transform.Find("outerBar/innerBar");
-        // innerBar.GetComponent<RectTransform>().sizeDelta
-        // var number = bar.transform.Find("number");
+        var innerBar = bar.transform.Find("outerBar/innerBar");
+        innerBar.GetComponent<RectTransform>().sizeDelta = new Vector2(MaxBarWidth * (float)percent, MaxBarHeight - InnerBarMargin);
+        var number = bar.transform.Find("number");
+        number.GetComponent<TextMeshProUGUI>().text = ((int)(percent * 100)).ToString() + "%";
     }
 }
