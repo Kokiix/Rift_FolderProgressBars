@@ -1,3 +1,1 @@
-# This behavior has been added in vanilla as of 1.15.0, so this mod is deprecated now :)
-
-<img width="586" height="338" alt="Untitled-2026-04-24-0136" src="https://github.com/user-attachments/assets/a976658b-a94b-44b6-84d0-e0f8eabd0089" />
+<img width="1920" height="1080" alt="image" src="https://github.com/user-attachments/assets/2eecae5c-3271-46ae-ae13-640c36822126" />
