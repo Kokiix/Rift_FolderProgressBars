@@ -44,25 +44,20 @@ static class ProgressBar
     internal static void ApplyBarToFolder(BaseTrackSelectionOptionGroup __instance, int optionIndex, string folderName)
     {
         var container = __instance._options[optionIndex].transform.Find("BounceContainer/Background");
-        var existingBar = container.Find("ProgressBar(Clone)");
+        var barInstance = container.Find("ProgressBar(Clone)");
 
-        GameObject barInstance = null;
-        if (existingBar)
+        // Debug
+        // if (barInstance)
+        //     UnityEngine.Object.Destroy(barInstance);
+
+        if (!barInstance)
         {
-            // Debug
-            UnityEngine.Object.Destroy(existingBar.gameObject);
-
-            // existingBar.gameObject.SetActive(true);
+            if (!ProgressBar.Template)
+                ProgressBar.InitTemplate(container.parent.Find("LetterGradeDashed"));
+            barInstance = UnityEngine.Object.Instantiate(ProgressBar.Template).transform;
+            barInstance.transform.SetParent(container, worldPositionStays: false);
+            barInstance.gameObject.SetActive(true);
         }
-        // else
-        // {
-        if (!ProgressBar.Template)
-            ProgressBar.InitTemplate(container.parent.Find("LetterGradeDashed"));
-        barInstance = UnityEngine.Object.Instantiate(ProgressBar.Template);
-        barInstance.transform.SetParent(container, worldPositionStays: false);
-        barInstance.SetActive(true);
-
-        // }
 
         int totalTracksInFolder = 0;
         double FCedTracks = 0;
@@ -84,7 +79,7 @@ static class ProgressBar
                 FCedTracks++;
         }
 
-        ProgressBar.SetPercentage(barInstance, Math.Round(FCedTracks / totalTracksInFolder, 2));
+        ProgressBar.SetPercentage(barInstance.gameObject, Math.Round(FCedTracks / totalTracksInFolder, 2));
 
     }
 
@@ -129,5 +124,6 @@ static class ProgressBar
 
         var number = bar.transform.Find("number");
         number.GetComponent<TextMeshProUGUI>().text = ((int)(percent * 100)).ToString() + "%";
+        number.transform.localPosition = NumberPosition;
     }
 }
