@@ -87,12 +87,12 @@ static class ToggleProgressBar
 
         var innerBar = UnityEngine.Object.Instantiate(outerBar);
         innerBar.name = "innerBar";
-        outerBar.GetComponent<Image>().color = InnerBarColor;
+        innerBar.GetComponent<Image>().color = InnerBarColor;
         innerBar.transform.SetParent(outerBar.transform);
 
         var number = UnityEngine.Object.Instantiate(textTemplate).gameObject;
         number.name = "number";
-        number.transform.SetParent(ProgressBar.transform);
+        number.transform.SetParent(ProgressBar.transform, false);
         number.transform.localPosition = NumberPosition;
         number.SetActive(true);
     }
@@ -100,7 +100,9 @@ static class ToggleProgressBar
     static void UpdateBarPercentage(GameObject bar, double percent)
     {
         var innerBar = bar.transform.Find("outerBar/innerBar");
-        innerBar.GetComponent<RectTransform>().sizeDelta = new Vector2(MaxBarWidth * (float)percent, MaxBarHeight - InnerBarMargin);
+        var innerBarWidth = MaxBarWidth * (float)percent;
+        innerBar.GetComponent<RectTransform>().sizeDelta = new Vector2(innerBarWidth, MaxBarHeight - InnerBarMargin);
+        innerBar.transform.localPosition = new Vector3(-MaxBarWidth / 2 + innerBarWidth / 2 + InnerBarMargin / 2, 0, 0);
         var number = bar.transform.Find("number");
         number.GetComponent<TextMeshProUGUI>().text = ((int)(percent * 100)).ToString() + "%";
     }
