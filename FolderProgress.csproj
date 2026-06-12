@@ -58,6 +58,7 @@
         <DebugType>embedded</DebugType>
     </PropertyGroup>
     <Target Name="CopyDLL" AfterTargets="PostBuildEvent" Condition=" '$(Configuration)' == 'Debug' ">
-        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(BepInExPluginDir)\DEVELOPMENT-BUILD-$(BepInExPluginName)" />
+        <RemoveDir Condition="Exists('$(BepInExPluginDir)\DEVELOPMENT-BUILD-$(BepInExPluginName)')" Directories="$(BepInExPluginDir)\DEVELOPMENT-BUILD-$(BepInExPluginName)" />
+        <Copy SourceFiles="$(TargetPath)" DestinationFiles="$(BepInExPluginDir)\DEVELOPMENT-BUILD-$(BepInExPluginName)\FolderProgress-v$(BepInExPluginVersion).dll" />
     </Target>
 </Project>
