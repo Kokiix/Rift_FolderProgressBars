@@ -12,10 +12,8 @@ using UnityEngine;
 using UnityEngine.UI;
 
 [HarmonyPatch(typeof(BaseTrackSelectionOptionGroup), "InitializeTrackOption")]
-static class ToggleProgressBar
+static class ApplyBarToNewOption
 {
-    static GameObject ProgressBar;
-
     static void Postfix(BaseTrackSelectionOptionGroup __instance, int optionIndex, ITrackMetadata newTrackMetadata, string folderName)
     {
         if (newTrackMetadata is FolderTrackMetadata)
@@ -33,9 +31,9 @@ static class ToggleProgressBar
             }
             // else
             // {
-            if (!ProgressBar)
-                CreateProgressBar(container.parent.Find("LetterGradeDashed"));
-            barInstance = UnityEngine.Object.Instantiate(ProgressBar);
+            if (!ProgressBar.Template)
+                ProgressBar.InitTemplate(container.parent.Find("LetterGradeDashed"));
+            barInstance = UnityEngine.Object.Instantiate(ProgressBar.Template);
             barInstance.transform.SetParent(container, worldPositionStays: false);
             barInstance.SetActive(true);
 
@@ -61,26 +59,31 @@ static class ToggleProgressBar
                     FCedTracks++;
             }
 
-            UpdateBarPercentage(barInstance, Math.Round(FCedTracks / totalTracksInFolder, 2));
+            ProgressBar.SetPercentage(barInstance, Math.Round(FCedTracks / totalTracksInFolder, 2));
         }
     }
+}
+
+static class ProgressBar
+{
+    internal static GameObject Template;
 
     const int MaxBarWidth = 300;
     const int MaxBarHeight = 15;
     const int InnerBarMargin = 5;
     static readonly Color OuterBarColor = new Color(0.553f, 0.533f, 0.592f);
     static readonly Color InnerBarColor = Color.black;
-    static readonly Vector3 BarPosition = new Vector3(200, -40, 0);
-    static readonly Vector3 NumberPosition = new Vector3(0, -40, 0);
+    static readonly Vector3 BarPosition = new Vector3(250, -40, 0);
+    static readonly Vector3 NumberPosition = new Vector3(50, -40, 0);
 
-    static void CreateProgressBar(Transform textTemplate)
+    internal static void InitTemplate(Transform textTemplate)
     {
         // TODO: make color change on select (likely something to do with TrackSelectionOptionColorAnimator)
-        ProgressBar = new GameObject("ProgressBar", typeof(RectTransform));
-        ProgressBar.SetActive(false);
+        Template = new GameObject("ProgressBar", typeof(RectTransform));
+        Template.SetActive(false);
 
         var outerBar = new GameObject("outerBar");
-        outerBar.transform.SetParent(ProgressBar.transform);
+        outerBar.transform.SetParent(Template.transform);
         outerBar.transform.localPosition = BarPosition;
         outerBar.AddComponent<Image>().color = OuterBarColor;
         outerBar.GetComponent<RectTransform>().sizeDelta = new Vector2(MaxBarWidth, MaxBarHeight);
@@ -92,12 +95,12 @@ static class ToggleProgressBar
 
         var number = UnityEngine.Object.Instantiate(textTemplate).gameObject;
         number.name = "number";
-        number.transform.SetParent(ProgressBar.transform, false);
+        number.transform.SetParent(Template.transform, false);
         number.transform.localPosition = NumberPosition;
         number.SetActive(true);
     }
 
-    static void UpdateBarPercentage(GameObject bar, double percent)
+    internal static void SetPercentage(GameObject bar, double percent)
     {
         var innerBar = bar.transform.Find("outerBar/innerBar");
         var innerBarWidth = MaxBarWidth * (float)percent;
